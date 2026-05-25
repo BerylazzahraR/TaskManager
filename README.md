@@ -31,7 +31,7 @@ Aplikasi ini mendukung:
 - Dark Mode Support
 
 Project ini dibangun menggunakan:
-- Laravel 12
+- Laravel 13
 - Laravel Breeze
 - Blade Template Engine
 - MySQL
