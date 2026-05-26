@@ -13,11 +13,17 @@ return new class extends Migration
             $table->foreignId('team_id')->constrained('teams')->cascadeOnDelete();
             $table->foreignId('task_id')->nullable()->constrained('tasks')->nullOnDelete();
             $table->foreignId('actor_id')->constrained('users')->cascadeOnDelete();
+            
+            // Masukkan SEMUA kemungkinan aksi di sini
             $table->enum('action', [
-                'team_created', 'member_added', 'member_removed', 'role_changed', 
+                'team_created', 'team_updated', 'team_deleted', 
+                'member_added', 'member_removed', 'role_changed', 
                 'task_created', 'task_updated', 'task_deleted', 'task_assigned', 
-                'comment_added', 'status_changed', 'deadline_changed', 'attachment_uploaded'
+                'comment_added', 'comment_deleted', 
+                'status_changed', 'deadline_changed', 
+                'attachment_uploaded', 'attachment_deleted'
             ]);
+            
             $table->string('subject_type')->nullable();
             $table->integer('subject_id')->nullable();
             $table->text('description');

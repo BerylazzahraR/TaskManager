@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TeamArchiveController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,9 +14,19 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // Profil bawaan Breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Custom routes untuk pengarsipan dan restore team Workspace
+    Route::post('/teams/{team}/archive', [TeamArchiveController::class, 'store'])->name('teams.archive');
+    Route::post('/teams/{team}/restore', [TeamArchiveController::class, 'restore'])->name('teams.restore');
+
+    // Standard Resource Route untuk Team CRUD
+    Route::resource('teams', TeamController::class)->parameters([
+        'teams' => 'team' 
+    ]);
 });
 
 require __DIR__.'/auth.php';
