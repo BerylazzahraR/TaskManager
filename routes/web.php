@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamArchiveController;
+use App\Http\Controllers\TeamMemberController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,6 +23,11 @@ Route::middleware('auth')->group(function () {
     // Custom routes untuk pengarsipan dan restore team Workspace
     Route::post('/teams/{team}/archive', [TeamArchiveController::class, 'store'])->name('teams.archive');
     Route::post('/teams/{team}/restore', [TeamArchiveController::class, 'restore'])->name('teams.restore');
+
+    // Resource Route untuk Team Member Management (Add, Change Role, Remove)
+    Route::post('/teams/{team}/members', [App\Http\Controllers\TeamMemberController::class, 'store'])->name('teams.members.store');
+    Route::put('/teams/{team}/members/{user}', [App\Http\Controllers\TeamMemberController::class, 'update'])->name('teams.members.update');
+    Route::delete('/teams/{team}/members/{user}', [App\Http\Controllers\TeamMemberController::class, 'destroy'])->name('teams.members.destroy');
 
     // Standard Resource Route untuk Team CRUD
     Route::resource('teams', TeamController::class)->parameters([
