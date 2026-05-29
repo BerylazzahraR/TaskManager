@@ -52,6 +52,22 @@ class TaskController extends Controller
 
         return back()->with('success', 'Task berhasil diperbarui!');
     }
+    /**
+     * Menampilkan form edit task
+     */
+    public function edit(int $teamId, int $taskId)
+    {
+        // Otorisasi
+        if (!$this->teamRepo->isAccessibleByUser($teamId, Auth::id())) {
+            abort(403, 'Anda tidak memiliki akses ke workspace ini.');
+        }
+
+        $team = $this->teamRepo->find($teamId);
+        $task = $this->taskRepo->find($taskId);
+        $members = $this->teamRepo->members($teamId);
+
+        return view('team.tasks.edit', compact('team', 'task', 'members'));
+    }
 
     /**
      * Menghapus task (Soft Delete)

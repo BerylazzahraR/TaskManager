@@ -158,13 +158,19 @@
                                             @endif
                                         </div>
                                         
-                                        <form action="{{ route('teams.tasks.destroy', [$team->id, $task->id]) }}" method="POST" onsubmit="return confirm('Yakin mau hapus task ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-bold bg-red-50 px-2 py-1 rounded">
-                                                Hapus
-                                            </button>
-                                        </form>
+                                        <div class="flex gap-2">
+                                            <a href="{{ route('teams.tasks.edit', [$team->id, $task->id]) }}" class="text-blue-500 hover:text-blue-700 text-xs font-bold bg-blue-50 px-2 py-1 rounded">
+                                                Edit
+                                            </a>
+
+                                            <form action="{{ route('teams.tasks.destroy', [$team->id, $task->id]) }}" method="POST" onsubmit="return confirm('Yakin mau hapus task ini?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-bold bg-red-50 px-2 py-1 rounded">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
 
                                     <div class="flex justify-between items-center text-xs bg-gray-50 p-2 rounded">

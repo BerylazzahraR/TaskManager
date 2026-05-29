@@ -65,13 +65,9 @@ class TeamMemberRepository extends BaseRepository implements TeamMemberRepositor
     public function removeMember($teamId, $userId)
     {
         $member = $this->findMember($teamId, $userId);
-        if ($member && method_exists($member, 'update')) {
-            $member->update(['status' => TeamMemberConstants::STATUS_REMOVED]);
-        } elseif ($member) {
-            $this->model->where('team_id', $teamId)
-                ->where('user_id', $userId)
-                ->update(['status' => TeamMemberConstants::STATUS_REMOVED]);
-            $member = $this->findMember($teamId, $userId);
+        if ($member) {
+            // Hard delete agar data langsung hilang dari tabel dan tampilan UI
+            $member->delete();
         }
         return $member;
     }
