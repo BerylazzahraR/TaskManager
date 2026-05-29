@@ -204,5 +204,33 @@
 
             </div>
         </div>
+        <div class="mt-6 bg-white shadow-sm sm:rounded-lg p-6">
+                <h3 class="text-lg font-bold border-b pb-2 mb-6">Riwayat Aktivitas</h3>
+                
+                @if($activities->isEmpty())
+                    <p class="text-sm text-gray-500 text-center py-4">Belum ada riwayat aktivitas di workspace ini.</p>
+                @else
+                    <div class="relative border-l-2 border-gray-100 ml-3">
+                        @foreach($activities as $activity)
+                            <div class="mb-6 ml-6">
+                                <span class="absolute flex items-center justify-center w-4 h-4 bg-blue-500 rounded-full -left-2 ring-4 ring-white"></span>
+                                
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1">
+                                    <h4 class="text-sm font-semibold text-gray-900">
+                                        {{ $activity->actor->name ?? 'Sistem' }}
+                                    </h4>
+                                    <time class="text-xs font-normal text-gray-400 sm:ml-3">
+                                        {{ \Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}
+                                    </time>
+                                </div>
+                                
+                                <p class="text-sm text-gray-600">
+                                    {{ $activity->description }}
+                                </p>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
     </div>
 </x-app-layout>

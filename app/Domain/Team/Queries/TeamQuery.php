@@ -54,4 +54,13 @@ class TeamQuery
     {
         return $this->teamRepository->dashboard($teamId);
     }
+
+    public function getActivities(int $teamId)
+    {
+        return \App\Models\WorkspaceActivity::with('actor')
+            ->where('team_id', $teamId)
+            ->orderBy('created_at', 'desc')
+            ->limit(30)
+            ->get();
+    }
 }
