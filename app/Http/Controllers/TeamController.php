@@ -54,25 +54,25 @@ class TeamController extends Controller
     /**
      * Menampilkan detail satu workspace spesifik beserta member dan task di dalamnya.
      */
-    /**
-     * Menampilkan detail satu workspace spesifik beserta member, task, dan aktivitas.
-     */
-    public function show(string $slug)
+    
+    public function show(Request $request, string $slug) // Pastikan ada (Request $request) di sini
     {
         $team = $this->teamQuery->getBySlug($slug);
 
-        // Validasi pengaman internal
         if ($team->owner_id !== Auth::id() && !$team->users()->where('users.id', Auth::id())->exists()) {
             abort(403, 'Anda tidak memiliki akses ke workspace ini.');
         }
 
         $members = $this->teamQuery->getMembers($team->id);
-        $tasks = $this->teamQuery->getTasks($team->id);
         
+        // Ambil data filter dari URL (jika ada)
+        $filters = $request->only(['status', 'assigned_to', 'search']);
+        
+        // Lempar filter ke getTasks
+        $tasks = $this->teamQuery->getTasks($team->id, $filters);
         
         $activities = $this->teamQuery->getActivities($team->id); 
 
-        
         return view('team.show', compact('team', 'members', 'tasks', 'activities')); 
     }
 

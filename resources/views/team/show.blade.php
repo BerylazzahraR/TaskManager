@@ -96,6 +96,42 @@
                 <div class="bg-white shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-bold border-b pb-2 mb-4">Daftar Task Workspace</h3>
 
+                    <form method="GET" action="{{ route('teams.show', $team->slug) }}" class="mb-6 bg-blue-50 p-3 rounded-lg border border-blue-100 flex flex-col sm:flex-row gap-2 items-end sm:items-center">
+                        <div class="flex-1 w-full sm:w-auto">
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Pencarian</label>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul task atau TSK-..." class="text-xs rounded-md border-gray-300 w-full focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div class="w-full sm:w-1/4">
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Status</label>
+                            <select name="status" class="text-xs rounded-md border-gray-300 w-full focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Semua Status</option>
+                                <option value="todo" {{ request('status') == 'todo' ? 'selected' : '' }}>TODO</option>
+                                <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>IN PROGRESS</option>
+                                <option value="done" {{ request('status') == 'done' ? 'selected' : '' }}>DONE</option>
+                            </select>
+                        </div>
+                        <div class="w-full sm:w-1/4">
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Assignee</label>
+                            <select name="assigned_to" class="text-xs rounded-md border-gray-300 w-full focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Semua Member</option>
+                                @foreach($members as $member)
+                                    <option value="{{ $member->id }}" {{ request('assigned_to') == $member->id ? 'selected' : '' }}>{{ $member->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="flex gap-1 w-full sm:w-auto">
+                            <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white text-xs font-bold py-2 px-4 rounded w-full sm:w-auto mt-4 sm:mt-0">
+                                Cari
+                            </button>
+                            
+                            @if(request()->hasAny(['search', 'status', 'assigned_to']) && (request('search') || request('status') || request('assigned_to')))
+                                <a href="{{ route('teams.show', $team->slug) }}" class="bg-red-500 hover:bg-red-700 text-white text-xs font-bold py-2 px-3 rounded text-center mt-4 sm:mt-0 flex items-center justify-center">
+                                    X
+                                </a>
+                            @endif
+                        </div>
+                    </form>
+
                     @if($team->status === 'active')
                         <form action="{{ route('teams.tasks.store', $team->id) }}" method="POST" class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
                             @csrf

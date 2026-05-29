@@ -8,7 +8,8 @@ class TeamQuery
 {
     public function __construct(
         protected TeamRepositoryInterface $teamRepository
-    ) {}
+    ) {
+    }
 
     public function getAll()
     {
@@ -45,9 +46,29 @@ class TeamQuery
         return $this->teamRepository->members($teamId);
     }
 
-    public function getTasks(int $teamId)
+    public function getTasks(int $teamId, array $filters = [])
     {
-        return $this->teamRepository->tasks($teamId);
+        $query = \App\Models\Task::with('assignee')->where('team_id', $teamId);
+
+        // 1. Filter berdasarkan Status
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        // 2. Filter berdasarkan User (PIC)
+        if (!empty($filters['assigned_to'])) {
+            $query->where('assigned_to', $filters['assigned_to']);
+        }
+
+        // 3. Search Task berdasarkan keyword (Judul atau Kode Task)
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('code', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+
+        return $query->orderBy('created_at', 'desc')->get();
     }
 
     public function getDashboard(int $teamId)
