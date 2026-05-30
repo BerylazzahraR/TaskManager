@@ -7,6 +7,13 @@
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            
+            @if (session('success'))
+                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 
                 <div class="mb-4">
@@ -73,8 +80,47 @@
                         </button>
                     </div>
                 </form>
-
             </div>
+
+            <div class="mt-6 bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <h3 class="text-lg font-bold border-b pb-2 mb-4">💬 Diskusi Tugas</h3>
+
+                <div class="space-y-4 mb-6">
+                    @forelse($task->comments as $comment)
+                        <div class="flex gap-3 {{ $comment->user_id == Auth::id() ? 'flex-row-reverse' : '' }}">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white
+                                {{ $comment->user_id == Auth::id() ? 'bg-blue-500' : 'bg-gray-500' }}">
+                                {{ substr($comment->user->name, 0, 2) }}
+                            </div>
+                            
+                            <div class="max-w-[80%] {{ $comment->user_id == Auth::id() ? 'text-right' : 'text-left' }}">
+                                <div class="text-xs text-gray-500 mb-1">
+                                    <span class="font-bold text-gray-800">{{ $comment->user->name }}</span> &bull; 
+                                    {{ $comment->created_at->diffForHumans() }}
+                                </div>
+                                <div class="p-3 rounded-lg text-sm inline-block text-left
+                                    {{ $comment->user_id == Auth::id() ? 'bg-blue-100 text-blue-900 rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none' }}">
+                                    {!! nl2br(e($comment->body)) !!}
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-sm text-gray-400 text-center py-4">Belum ada diskusi. Jadilah yang pertama berkomentar!</p>
+                    @endforelse
+                </div>
+
+                <form action="{{ route('teams.tasks.comments.store', [$team->id, $task->id]) }}" method="POST" class="mt-4 border-t pt-4">
+                    @csrf
+                    <div class="flex items-start gap-2">
+                        <textarea name="body" rows="2" placeholder="Tulis komentar atau update progres di sini..." required class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"></textarea>
+                        <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded shadow-sm text-sm h-full">
+                            Kirim
+                        </button>
+                    </div>
+                    @error('body') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
+                </form>
+            </div>
+
         </div>
     </div>
 </x-app-layout>

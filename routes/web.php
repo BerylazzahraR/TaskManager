@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/teams/{team}/tasks/{task}/edit', [App\Http\Controllers\TaskController::class, 'edit'])->name('teams.tasks.edit');
     Route::put('/teams/{team}/tasks/{task}', [App\Http\Controllers\TaskController::class, 'update'])->name('teams.tasks.update');
     Route::delete('/teams/{team}/tasks/{task}', [App\Http\Controllers\TaskController::class, 'destroy'])->name('teams.tasks.destroy');
+    Route::post('/teams/{team}/tasks/{task}/comments', [App\Http\Controllers\TaskCommentController::class, 'store'])->name('teams.tasks.comments.store');
 
     // Standard Resource Route untuk Team CRUD
     Route::resource('teams', TeamController::class)->parameters([
