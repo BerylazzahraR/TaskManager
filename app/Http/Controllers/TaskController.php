@@ -83,4 +83,53 @@ class TaskController extends Controller
 
         return back()->with('success', 'Task berhasil dihapus.');
     }
+
+    /**
+     * Menampilkan halaman Kanban Board (Drag & Drop)
+     */
+    public function board(string $slug, \App\Domain\Team\Queries\TeamQuery $teamQuery)
+    {
+        $team = $teamQuery->getBySlug($slug);
+
+        // Otorisasi Akses
+        if ($team->owner_id !== Auth::id() && !$team->users()->where('users.id', Auth::id())->exists()) {
+            abort(403, 'Anda tidak memiliki akses ke workspace ini.');
+        }
+
+        // Tarik semua task dan kelompokkan berdasarkan statusnya
+        $tasks = $teamQuery->getTasks($team->id);
+        $todoTasks = $tasks->where('status', 'todo');
+        $inProgressTasks = $tasks->where('status', 'in_progress');
+        $doneTasks = $tasks->where('status', 'done');
+
+        return view('team.tasks.board', compact('team', 'todoTasks', 'inProgressTasks', 'doneTasks'));
+    }
+
+    /**
+     * Update status via AJAX saat drag & drop selesai
+     */
+    public function updateStatus(Request $request, int $teamId, int $taskId, \App\Repositories\Contracts\WorkspaceActivityRepositoryInterface $activityRepo)
+    {
+        $request->validate(['status' => 'required|in:todo,in_progress,done']);
+
+        $task = \App\Models\Task::where('team_id', $teamId)->findOrFail($taskId);
+        $oldStatus = $task->status;
+        $newStatus = $request->status;
+
+        if ($oldStatus !== $newStatus) {
+            $task->update(['status' => $newStatus]);
+
+            // Catat ke Activity Timeline
+            $activityRepo->create([
+                'team_id' => $teamId,
+                'actor_id' => Auth::id(),
+                'action' => 'updated_task_status',
+                'subject_type' => 'task',
+                'subject_id' => $task->id,
+                'description' => "Memindahkan task {$task->code} ke kolom " . strtoupper($newStatus),
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Status updated']);
+    }
 }

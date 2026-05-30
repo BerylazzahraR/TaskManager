@@ -94,7 +94,12 @@
                 </div>
 
                 <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Daftar Task Workspace</h3>
+                    <div class="flex justify-between items-center border-b pb-2 mb-4">
+    <h3 class="text-lg font-bold">Daftar Task Workspace</h3>
+    <a href="{{ route('teams.tasks.board', $team->slug) }}" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-1 px-3 rounded flex items-center gap-1 shadow-sm">
+        📊 Buka Kanban Board
+    </a>
+</div>
 
                     <form method="GET" action="{{ route('teams.show', $team->slug) }}" class="mb-6 bg-blue-50 p-3 rounded-lg border border-blue-100 flex flex-col sm:flex-row gap-2 items-end sm:items-center">
                         <div class="flex-1 w-full sm:w-auto">
