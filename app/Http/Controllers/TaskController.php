@@ -37,6 +37,20 @@ class TaskController extends Controller
 
         return back()->with('success', 'Task baru berhasil ditambahkan!');
     }
+    public function create(string $slug, \App\Domain\Team\Queries\TeamQuery $teamQuery)
+    {
+        $team = $teamQuery->getBySlug($slug);
+        
+        // Cek Otorisasi (Hanya anggota yang bisa buat task)
+        if ($team->owner_id !== \Illuminate\Support\Facades\Auth::id() && !$team->users()->where('users.id', \Illuminate\Support\Facades\Auth::id())->exists()) {
+            abort(403, 'Anda tidak memiliki akses ke workspace ini.');
+        }
+
+        // Ambil daftar member buat dropdown "Assignee"
+        $members = $teamQuery->getMembers($team->id);
+
+        return view('team.tasks.create', compact('team', 'members'));
+    }
 
     /**
      * Memperbarui data task atau status task
@@ -131,5 +145,12 @@ class TaskController extends Controller
         }
 
         return response()->json(['success' => true, 'message' => 'Status updated']);
+    }
+    public function show(int $teamId, int $taskId)
+    {
+        $team = \App\Models\Team::findOrFail($teamId);
+        $task = \App\Models\Task::with(['assignee', 'comments.user'])->where('team_id', $teamId)->findOrFail($taskId);
+        
+        return view('team.tasks.show', compact('team', 'task'));
     }
 }
