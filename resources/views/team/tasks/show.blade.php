@@ -19,7 +19,6 @@
                 </div>
             @endif
 
-            <!-- KARTU INFO DETAIL TASK -->
             <div class="bg-white overflow-hidden border border-gray-200 sm:rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.02)] p-8">
                 <div class="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
                     <div>
@@ -48,7 +47,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     <div>
                         <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Assignee</h4>
                         <p class="text-sm font-medium text-[#37352f] flex items-center gap-1.5">
@@ -67,10 +66,16 @@
                             <p class="text-sm text-gray-500 italic">Tanpa tenggat</p>
                         @endif
                     </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Terakhir Diedit</h4>
+                        <p class="text-sm font-medium text-gray-600 flex items-center gap-1.5">
+                            <span class="iconify text-gray-400" data-icon="lucide:history" data-width="16"></span>
+                            {{ $task->updated_at ? $task->updated_at->diffForHumans() : '-' }}
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <!-- KARTU DISKUSI / KOMENTAR -->
             <div class="bg-white overflow-hidden border border-gray-200 sm:rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.02)] p-8">
                 <h3 class="text-lg font-bold text-[#37352f] border-b border-gray-100 pb-3 mb-6 flex items-center gap-2">
                     <span class="iconify text-gray-500" data-icon="lucide:message-square"></span>
