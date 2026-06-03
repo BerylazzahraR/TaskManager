@@ -116,7 +116,7 @@ class TeamController extends Controller
 
         $this->deleteAction->execute($id, Auth::id());
 
-        return redirect()->route('teams.index')
+        return redirect()->route('dashboard')
             ->with('success', 'Workspace berhasil dihapus.');
     }
 }

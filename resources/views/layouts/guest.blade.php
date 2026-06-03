@@ -1,32 +1,53 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) }"
+      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
+      x-bind:class="{ 'dark': darkMode }">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Task Manager') }} - Authentication</title>
 
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Script Iconify -->
+        <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+        <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <style>
-            body { font-family: 'Inter', sans-serif; }
-        </style>
     </head>
-    <body class="text-[#37352f] antialiased bg-white selection:bg-gray-200">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
-            <div>
-                <a href="/" class="text-2xl font-bold flex items-center gap-2 text-[#37352f] hover:opacity-80 transition-opacity">
-                    <svg class="w-8 h-8 text-[#37352f]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Task Manager
+    <body class="font-sans text-gray-900 dark:text-gray-100 antialiased transition-colors duration-300">
+        
+        <!-- Tombol Switch Tema Melayang di Pojok Kanan Atas -->
+        <div class="absolute top-4 right-4 sm:top-6 sm:right-8">
+            <button @click="darkMode = !darkMode" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition-colors focus:outline-none shadow-sm" title="Toggle Tema">
+                <span x-show="darkMode" class="iconify" data-icon="lucide:sun" data-width="20" style="display: none;"></span>
+                <span x-show="!darkMode" class="iconify" data-icon="lucide:moon" data-width="20"></span>
+            </button>
+        </div>
+
+        <!-- Wrapper Utama -->
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-50 dark:bg-[#1a1a1a] transition-colors duration-300">
+            
+            <!-- Logo -->
+            <div class="mb-4">
+                <a href="/" class="flex flex-col items-center gap-2">
+                    <img src="{{ asset('asset/logo1.png') }}" alt="Logo" class="h-14 w-auto">
+                    <span class="font-bold text-xl text-[#37352f] dark:text-gray-200">Task Manager</span>
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-8 px-6 py-8 bg-white border border-gray-200 shadow-[0_2px_4px_rgba(0,0,0,0.02)] overflow-hidden sm:rounded-lg">
+            <!-- Kotak Form Login/Register -->
+            <div class="w-full sm:max-w-md mt-2 px-8 py-8 bg-white dark:bg-[#242424] shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-gray-200 dark:border-gray-800 overflow-hidden sm:rounded-xl transition-colors duration-300">
                 {{ $slot }}
+            </div>
+            
+            <div class="mt-8 text-xs text-gray-400 dark:text-gray-500 text-center">
+                &copy; {{ date('Y') }} Team Task Manager.
             </div>
         </div>
     </body>
