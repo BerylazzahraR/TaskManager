@@ -5,7 +5,7 @@
             <span class="iconify" data-icon="lucide:chevron-right" data-width="14"></span>
             <a href="{{ route('teams.show', $team->slug) }}" class="hover:text-[#0056b3] dark:hover:text-blue-400 transition-colors">{{ $team->name }}</a>
             <span class="iconify" data-icon="lucide:chevron-right" data-width="14"></span>
-            <span class="font-semibold text-[#37352f] dark:text-gray-200 transition-colors">Edit Task: {{ $task->code }}</span>
+            <span class="font-semibold text-[#37352f] dark:text-gray-200 transition-colors">Edit Task: {{ $task->title }}</span>
         </div>
     </x-slot>
 
@@ -22,7 +22,7 @@
                     <h3 class="text-xl font-bold text-[#37352f] dark:text-gray-100 flex items-center gap-2 transition-colors">
                         <span class="iconify" data-icon="lucide:edit-3"></span> Edit Detail Tugas
                     </h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors">Perbarui informasi tugas <span class="font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded">{{ $task->code }}</span> di bawah ini.</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors">Perbarui informasi tugas <span class="font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded">{{ $task->title }}</span> di bawah ini.</p>
                 </div>
 
                 <form action="{{ route('teams.tasks.update', [$team->id, $task->id]) }}" method="POST">

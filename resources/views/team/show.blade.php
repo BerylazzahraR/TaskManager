@@ -160,7 +160,7 @@
                                                                             </div>
                                                                             <div>
                                                                                 <h3 class="text-lg font-bold text-[#37352f] dark:text-gray-100">Hapus Task</h3>
-                                                                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 text-left">Yakin mau hapus task <strong>{{ $task->code }}</strong> secara permanen?</p>
+                                                                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 text-left">Yakin mau hapus task <strong>{{ $task->title }}</strong> secara permanen?</p>
                                                                             </div>
                                                                         </div>
                                                                         <div class="mt-6 flex justify-end gap-3">

@@ -5,7 +5,7 @@
             <span class="iconify" data-icon="lucide:chevron-right" data-width="14"></span>
             <a href="{{ route('teams.show', $team->slug) }}" class="hover:text-[#0056b3] dark:hover:text-blue-400 transition-colors">{{ $team->name }}</a>
             <span class="iconify" data-icon="lucide:chevron-right" data-width="14"></span>
-            <span class="font-semibold text-[#37352f] dark:text-gray-200 transition-colors">Detail Task: {{ $task->code }}</span>
+            <span class="font-semibold text-[#37352f] dark:text-gray-200 transition-colors">Detail Task: {{ $task->title }}</span>
         </div>
     </x-slot>
 
@@ -23,7 +23,7 @@
                 <div class="flex justify-between items-start mb-6 border-b border-gray-100 dark:border-gray-700 pb-4 transition-colors">
                     <div>
                         <div class="flex items-center gap-2 mb-2">
-                            <span class="text-xs font-mono bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded shadow-sm transition-colors">{{ $task->code }}</span>
+                            <span class="text-xs font-mono bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded shadow-sm transition-colors">{{ $task->title }}</span>
                             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors
                                 {{ $task->priority === 'high' ? 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/50' : ($task->priority === 'medium' ? 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 border border-yellow-100 dark:border-yellow-800/50' : 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-800/50') }}">
                                 {{ $task->priority }}

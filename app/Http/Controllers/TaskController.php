@@ -140,7 +140,7 @@ class TaskController extends Controller
                 'action' => 'updated_task_status',
                 'subject_type' => 'task',
                 'subject_id' => $task->id,
-                'description' => "Memindahkan task {$task->code} ke kolom " . strtoupper($newStatus),
+                'description' => "Memindahkan task {$task->title} ke kolom " . strtoupper($newStatus),
             ]);
         }
 

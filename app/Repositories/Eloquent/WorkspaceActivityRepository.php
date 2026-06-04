@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\WorkspaceActivity;
 use App\Models\Task;
+use App\Models\User; 
 use App\Support\Constants\WorkspaceActivityConstants;
 use App\Repositories\Contracts\WorkspaceActivityRepositoryInterface;
 
@@ -54,7 +55,7 @@ class WorkspaceActivityRepository extends BaseRepository implements WorkspaceAct
             'action' => WorkspaceActivityConstants::ACTION_TASK_CREATED,
             'subject_type' => 'task',
             'subject_id' => $taskId,
-            'description' => "Task {$task->code} created",
+            'description' => "Membuat task baru: '{$task->title}'", // Diubah
         ]);
     }
 
@@ -68,7 +69,7 @@ class WorkspaceActivityRepository extends BaseRepository implements WorkspaceAct
             'action' => WorkspaceActivityConstants::ACTION_TASK_UPDATED,
             'subject_type' => 'task',
             'subject_id' => $taskId,
-            'description' => "Task {$task->code} updated",
+            'description' => "Memperbarui task: '{$task->title}'", // Diubah
             'before_data' => $before,
             'after_data' => $after,
         ]);
@@ -77,6 +78,8 @@ class WorkspaceActivityRepository extends BaseRepository implements WorkspaceAct
     public function recordStatusChanged($taskId, $actorId, $from, $to)
     {
         $task = Task::find($taskId);
+        $statusTo = strtoupper(str_replace('_', ' ', $to)); 
+        
         return $this->create([
             'team_id' => $task->team_id,
             'task_id' => $taskId,
@@ -84,7 +87,7 @@ class WorkspaceActivityRepository extends BaseRepository implements WorkspaceAct
             'action' => WorkspaceActivityConstants::ACTION_STATUS_CHANGED,
             'subject_type' => 'task',
             'subject_id' => $taskId,
-            'description' => "Status changed from {$from} to {$to}",
+            'description' => "Mengubah status '{$task->title}' menjadi {$statusTo}", 
             'before_data' => ['status' => $from],
             'after_data' => ['status' => $to],
         ]);
@@ -93,6 +96,9 @@ class WorkspaceActivityRepository extends BaseRepository implements WorkspaceAct
     public function recordTaskAssigned($taskId, $actorId, $oldUserId, $newUserId)
     {
         $task = Task::find($taskId);
+        $user = User::find($newUserId);
+        $userName = $user ? $user->name : 'seseorang'; 
+
         return $this->create([
             'team_id' => $task->team_id,
             'task_id' => $taskId,
@@ -100,7 +106,7 @@ class WorkspaceActivityRepository extends BaseRepository implements WorkspaceAct
             'action' => WorkspaceActivityConstants::ACTION_TASK_ASSIGNED,
             'subject_type' => 'task',
             'subject_id' => $taskId,
-            'description' => "Task assigned to user {$newUserId}",
+            'description' => "Menugaskan '{$task->title}' kepada {$userName}", 
             'before_data' => ['assigned_to' => $oldUserId],
             'after_data' => ['assigned_to' => $newUserId],
         ]);
@@ -108,25 +114,30 @@ class WorkspaceActivityRepository extends BaseRepository implements WorkspaceAct
 
     public function recordMemberAdded($teamId, $actorId, $userId)
     {
+        $user = User::find($userId);
+        $userName = $user ? $user->name : 'Anggota';
+
         return $this->create([
             'team_id' => $teamId,
             'actor_id' => $actorId,
             'action' => WorkspaceActivityConstants::ACTION_MEMBER_ADDED,
             'subject_type' => 'member',
             'subject_id' => $userId,
-            'description' => "User {$userId} added to workspace",
+            'description' => "Menambahkan {$userName} ke dalam workspace",
         ]);
     }
 
     public function recordMemberRemoved($teamId, $actorId, $userId)
     {
+        $user = User::find($userId);
+        $userName = $user ? $user->name : 'Anggota';
         return $this->create([
             'team_id' => $teamId,
             'actor_id' => $actorId,
             'action' => WorkspaceActivityConstants::ACTION_MEMBER_REMOVED,
             'subject_type' => 'member',
             'subject_id' => $userId,
-            'description' => "User {$userId} removed from workspace",
+            'description' => "Mengeluarkan {$userName} dari workspace", 
         ]);
     }
 }

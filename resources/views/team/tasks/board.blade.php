@@ -40,7 +40,7 @@
                         </h3>
                         <span class="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $todoTasks->count() }}</span>
                     </div>
-                    <div id="todo" class="kanban-column flex-1 overflow-y-auto pr-2 pb-10" data-status="todo">
+                    <div id="todo" class="kanban-column flex-1 overflow-y-auto pr-2 pb-10 space-y-3" data-status="todo">
                         @foreach($todoTasks as $task) @include('team.tasks._kanban_card', ['task' => $task]) @endforeach
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                         </h3>
                         <span class="bg-blue-100 dark:bg-blue-900/50 text-[#0056b3] dark:text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $inProgressTasks->count() }}</span>
                     </div>
-                    <div id="in_progress" class="kanban-column flex-1 overflow-y-auto pr-2 pb-10" data-status="in_progress">
+                    <div id="in_progress" class="kanban-column flex-1 overflow-y-auto pr-2 pb-10 space-y-3" data-status="in_progress">
                         @foreach($inProgressTasks as $task) @include('team.tasks._kanban_card', ['task' => $task]) @endforeach
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         </h3>
                         <span class="bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $doneTasks->count() }}</span>
                     </div>
-                    <div id="done" class="kanban-column flex-1 overflow-y-auto pr-2 pb-10" data-status="done">
+                    <div id="done" class="kanban-column flex-1 overflow-y-auto pr-2 pb-10 space-y-3" data-status="done">
                         @foreach($doneTasks as $task) @include('team.tasks._kanban_card', ['task' => $task]) @endforeach
                     </div>
                 </div>
@@ -75,4 +75,69 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-    </x-app-layout>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const columns = document.querySelectorAll('.kanban-column');
+            const csrfToken = '{{ csrf_token() }}';
+            const teamId = '{{ $team->id }}';
+
+            columns.forEach(column => {
+                new Sortable(column, {
+                    group: 'shared', // Mengizinkan drag antar kolom
+                    animation: 150,
+                    ghostClass: 'opacity-40', // Efek pas ditarik
+                    
+                    onEnd: function (evt) {
+                        const itemEl = evt.item;
+                        const newColumn = evt.to;
+                        
+                        const taskId = itemEl.getAttribute('data-task-id');
+                        const newStatus = newColumn.getAttribute('data-status');
+                        const oldStatus = evt.from.getAttribute('data-status');
+
+                        // Kalau dipindah ke kolom yang berbeda, update ke database
+                        if (newStatus !== oldStatus) {
+                            fetch(`/teams/${teamId}/tasks/${taskId}/status`, {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({ status: newStatus })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if(data.success) {
+                                    showToast();
+                                    updateCounters(); // Update angka total task di atas kolom
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                        }
+                    },
+                });
+            });
+
+            // Fungsi nampilin notifikasi toast
+            function showToast() {
+                const toast = document.getElementById('toast');
+                toast.classList.remove('opacity-0');
+                setTimeout(() => { toast.classList.add('opacity-0'); }, 3000);
+            }
+
+            // Fungsi ngitung otomatis angka di atas kolom
+            function updateCounters() {
+                ['todo', 'in_progress', 'done'].forEach(status => {
+                    const col = document.getElementById(status);
+                    if(col) {
+                        const count = col.children.length;
+                        const badge = col.previousElementSibling.querySelector('span:last-child');
+                        if(badge) badge.innerText = count;
+                    }
+                });
+            }
+        });
+    </script>
+</x-app-layout>
