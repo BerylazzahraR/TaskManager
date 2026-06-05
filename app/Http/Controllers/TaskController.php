@@ -20,27 +20,25 @@ class TaskController extends Controller
         protected CreateTaskAction $createTaskAction,
         protected UpdateTaskAction $updateTaskAction,
         protected DeleteTaskAction $deleteTaskAction
-    ) {}
+    ) {
+    }
 
     /**
      * Menyimpan task baru ke dalam workspace
      */
     public function store(StoreTaskRequest $request, int $teamId)
     {
-        // Otorisasi: Pastikan user login punya akses ke workspace ini
         if (!$this->teamRepo->isAccessibleByUser($teamId, Auth::id())) {
             abort(403, 'Anda tidak memiliki akses ke workspace ini.');
         }
-
-        // Jalankan Action pembuatan task
-        $this->createTaskAction->execute($teamId, Auth::id(), $request->validated());
-
-        return back()->with('success', 'Task baru berhasil ditambahkan!');
+        $task = $this->createTaskAction->execute($teamId, Auth::id(), $request->validated());
+        return redirect()->route('teams.tasks.show', [$teamId, $task->id])
+            ->with('success', 'Task baru berhasil ditambahkan!');
     }
     public function create(string $slug, \App\Domain\Team\Queries\TeamQuery $teamQuery)
     {
         $team = $teamQuery->getBySlug($slug);
-        
+
         // Cek Otorisasi (Hanya anggota yang bisa buat task)
         if ($team->owner_id !== \Illuminate\Support\Facades\Auth::id() && !$team->users()->where('users.id', \Illuminate\Support\Facades\Auth::id())->exists()) {
             abort(403, 'Anda tidak memiliki akses ke workspace ini.');
@@ -60,11 +58,9 @@ class TaskController extends Controller
         if (!$this->teamRepo->isAccessibleByUser($teamId, Auth::id())) {
             abort(403, 'Anda tidak memiliki akses untuk mengubah task.');
         }
-
-        // Jalankan Action update task
         $this->updateTaskAction->execute($taskId, Auth::id(), $request->validated());
-
-        return back()->with('success', 'Task berhasil diperbarui!');
+        return redirect()->route('teams.tasks.show', [$teamId, $taskId])
+            ->with('success', 'Task berhasil diperbarui!');
     }
     /**
      * Menampilkan form edit task
@@ -150,7 +146,7 @@ class TaskController extends Controller
     {
         $team = \App\Models\Team::findOrFail($teamId);
         $task = \App\Models\Task::with(['assignee', 'comments.user'])->where('team_id', $teamId)->findOrFail($taskId);
-        
+
         return view('team.tasks.show', compact('team', 'task'));
     }
 }
