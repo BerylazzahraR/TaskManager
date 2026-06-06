@@ -1,40 +1,97 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-    x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) }"
-    x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" x-bind:class="{ 'dark': darkMode }">
+      x-data="{ 
+          darkMode: localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),
+          sidebarOpen: window.innerWidth >= 1024 
+      }"
+      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
+      x-bind:class="{ 'dark': darkMode }">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <title>{{ config('app.name', 'Task Manager') }}</title>
+        
+        <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+        <style>
+            ::-webkit-scrollbar { width: 6px; height: 6px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+            .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        </style>
+    </head>
+    
+    <body class="font-sans antialiased text-slate-800 dark:text-slate-200 transition-colors duration-300">
+        
+        <div class="flex h-screen overflow-hidden bg-[#f4f7fe] dark:bg-slate-900 transition-colors duration-300">
+            
+            @include('layouts.navigation')
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+            <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+                
+                <header class="sticky top-0 z-30 bg-[#f4f7fe]/90 dark:bg-slate-900/90 backdrop-blur-md transition-colors duration-300">
+                    <div class="flex items-center justify-between px-6 py-4">
+                        
+                        <div class="flex items-center mr-4" x-show="!sidebarOpen" style="display: none;">
+                            <button @click="sidebarOpen = true" class="p-2 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-indigo-400 dark:hover:bg-slate-800 focus:outline-none transition-all" title="Buka Sidebar">
+                                <span class="iconify" data-icon="lucide:panel-left" data-width="24"></span>
+                            </button>
+                        </div>
 
-    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+                        <div class="hidden sm:block transition-all" :class="!sidebarOpen ? 'ml-0' : ''">
+                            @isset($header)
+                                {{ $header }}
+                            @endisset
+                        </div>
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+                        <div class="flex items-center gap-4 ml-auto">
+                            <button @click="darkMode = !darkMode" class="p-2.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-slate-800 rounded-full shadow-sm transition-all focus:outline-none border border-transparent dark:border-slate-700">
+                                <span x-show="darkMode" class="iconify" data-icon="lucide:sun" data-width="18" style="display: none;"></span>
+                                <span x-show="!darkMode" class="iconify" data-icon="lucide:moon" data-width="18"></span>
+                            </button>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+                            <button class="relative p-2.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-slate-800 rounded-full shadow-sm transition-all focus:outline-none border border-transparent dark:border-slate-700">
+                                <span class="iconify" data-icon="lucide:bell" data-width="18"></span>
+                                <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-slate-800"></span>
+                            </button>
 
-<body class="font-sans antialiased text-gray-900 dark:text-gray-100 transition-colors duration-300">
-    <div class="min-h-screen bg-gray-50 dark:bg-[#1a1a1a] transition-colors duration-300">
-        @include('layouts.navigation')
+                            <x-dropdown align="right" width="48">
+                                <x-slot name="trigger">
+                                    <button class="flex items-center gap-2 p-1.5 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-100 dark:border-slate-700 transition-all focus:outline-none hover:ring-2 hover:ring-indigo-100 dark:hover:ring-indigo-900/30">
+                                        <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm">
+                                            {{ substr(Auth::user()->name, 0, 1) }}
+                                        </div>
+                                        <div class="hidden md:block text-sm font-semibold text-left ml-1 mr-2">
+                                            <span class="block text-slate-700 dark:text-slate-200">{{ explode(' ', Auth::user()->name)[0] }}</span>
+                                        </div>
+                                        <span class="iconify text-slate-400 mr-2" data-icon="lucide:chevron-down" data-width="16"></span>
+                                    </button>
+                                </x-slot>
+                                <x-slot name="content">
+                                    <x-dropdown-link :href="route('profile.edit')">
+                                        <div class="flex items-center gap-2"><span class="iconify" data-icon="lucide:user" data-width="16"></span> {{ __('Profile') }}</div>
+                                    </x-dropdown-link>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
+                                            <div class="flex items-center gap-2 text-red-500 dark:text-red-400"><span class="iconify" data-icon="lucide:log-out" data-width="16"></span> {{ __('Log Out') }}</div>
+                                        </x-dropdown-link>
+                                    </form>
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+                    </div>
+                </header>
 
-        @isset($header)
-            <header
-                class="bg-white dark:bg-[#242424] border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endisset
+                <main class="w-full grow p-4 sm:p-6 lg:p-8">
+                    {{ $slot }}
+                </main>
 
-        <main>
-            {{ $slot }}
-        </main>
-    </div>
-</body>
-
+            </div>
+        </div>
+    </body>
 </html>
