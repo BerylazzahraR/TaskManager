@@ -75,7 +75,7 @@
         <div class="mt-4 bg-indigo-50/50 dark:bg-indigo-900/20 p-4 rounded-xl text-center border border-indigo-100/50 dark:border-indigo-800/30 relative overflow-hidden">
             <span class="iconify text-indigo-500 dark:text-indigo-400 mx-auto mb-2" data-icon="lucide:life-buoy" data-width="24"></span>
             <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300">Help & Support</p>
-            <p class="text-[9px] text-slate-500 dark:text-slate-400 mt-1">Kontak Admin HIMATIF</p>
+            <p class="text-[9px] text-slate-500 dark:text-slate-400 mt-1">Kontak Admin Beryl</p>
             <div class="absolute -right-4 -bottom-4 w-12 h-12 bg-indigo-500/10 rounded-full blur-md"></div>
         </div>
     </div>

@@ -9,7 +9,7 @@ use App\Models\Team;
 
 class DashboardController extends Controller
 {
-   public function index()
+    public function index()
     {
         $userId = Auth::id();
 
@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $totalTasks = Task::where('assigned_to', $userId)->count();
         $completedTasks = Task::where('assigned_to', $userId)->where('status', 'done')->count();
         $pendingTasks = $totalTasks - $completedTasks;
-        
+
         // --- TAMBAHIN INI: Hitung Task Terlambat ---
         $overdueTasks = Task::where('assigned_to', $userId)
             ->where('status', '!=', 'done')
@@ -29,7 +29,7 @@ class DashboardController extends Controller
         $myTasks = Task::with('team')
             ->where('assigned_to', $userId)
             ->where('status', '!=', 'done')
-            ->orderByRaw('deadline_at IS NULL, deadline_at ASC') 
+            ->orderByRaw('deadline_at IS NULL, deadline_at ASC')
             ->take(10)
             ->get();
 
@@ -37,13 +37,13 @@ class DashboardController extends Controller
         $myWorkspaces = Team::where('owner_id', $userId)
             ->orWhereHas('users', function ($query) use ($userId) {
                 $query->where('users.id', $userId)
-                      ->where('team_members.status', 'active');
+                    ->where('team_members.status', 'active');
             })
             ->where('status', 'active')
             ->distinct()
             ->get();
 
-        // Jangan lupa $overdueTasks dimasukin ke compact!
+        
         return view('dashboard', compact('totalTasks', 'completedTasks', 'pendingTasks', 'overdueTasks', 'myTasks', 'myWorkspaces'));
     }
 }
