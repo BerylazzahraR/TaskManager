@@ -1,4 +1,6 @@
-<div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/70 p-4 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] dark:shadow-none cursor-grab active:cursor-grabbing hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all group" data-task-id="{{ $task->id }}">
+<div onclick="window.location.href='{{ route('teams.tasks.show', [$task->team_id, $task->id]) }}'" 
+     class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/70 p-4 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] dark:shadow-none cursor-pointer active:cursor-grabbing hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:shadow-md transition-all group" 
+     data-task-id="{{ $task->id }}">
     
     <div class="flex justify-between items-start mb-3">
         <span class="text-[10px] font-mono bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 px-2 py-1 rounded-md border border-slate-100 dark:border-slate-700">{{ $task->code }}</span>
