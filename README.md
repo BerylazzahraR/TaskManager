@@ -156,7 +156,7 @@ app/
 
 | Technology | Usage |
 |---|---|
-| Laravel 12 | Backend Framework |
+| Laravel 13 | Backend Framework |
 | PHP 8.3+ | Programming Language |
 | MySQL | Database |
 | Blade | Templating Engine |
