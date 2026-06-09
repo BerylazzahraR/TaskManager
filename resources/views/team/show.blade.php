@@ -7,11 +7,9 @@
         </div>
     </x-slot>
 
-    <!-- WRAPPER UTAMA DENGAN ALPINE.JS -->
     <div class="py-8" x-data="{ showActivityModal: false }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <!-- Notifikasi -->
             @if (session('success'))
                 <div class="mb-6 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 shadow-sm transition-colors">
                     <span class="iconify" data-icon="lucide:check-circle" data-width="18"></span> {{ session('success') }}
@@ -23,13 +21,61 @@
                 </div>
             @endif
 
-            <!-- LAYOUT 2 KOLOM -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <!-- KOLOM KIRI: DAFTAR TUGAS -->
                 <div class="lg:col-span-2 space-y-6">
+                    
+                    @php
+                        $teamTasks = \App\Models\Task::where('team_id', $team->id)->get();
+                        $todoWorkspace = $teamTasks->where('status', 'todo')->count();
+                        $progressWorkspace = $teamTasks->where('status', 'in_progress')->count();
+                        $doneWorkspace = $teamTasks->where('status', 'done')->count();
+                        $totalWorkspace = $teamTasks->count();
+                    @endphp
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-4 shadow-[4px_4px_24px_rgba(0,0,0,0.02)] dark:shadow-none flex items-center gap-3 transition-colors">
+                            <div class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400">
+                                <span class="iconify" data-icon="lucide:target" data-width="20"></span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Task</p>
+                                <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100 leading-none mt-0.5">{{ $totalWorkspace }}</h4>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-4 shadow-[4px_4px_24px_rgba(0,0,0,0.02)] dark:shadow-none flex items-center gap-3 transition-colors">
+                            <div class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400">
+                                <span class="iconify" data-icon="lucide:list-todo" data-width="20"></span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Todo</p>
+                                <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100 leading-none mt-0.5">{{ $todoWorkspace }}</h4>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-4 shadow-[4px_4px_24px_rgba(0,0,0,0.02)] dark:shadow-none flex items-center gap-3 transition-colors">
+                            <div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 dark:text-indigo-400">
+                                <span class="iconify" data-icon="lucide:loader" data-width="20"></span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Proses</p>
+                                <h4 class="text-xl font-bold text-indigo-600 dark:text-indigo-400 leading-none mt-0.5">{{ $progressWorkspace }}</h4>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-4 shadow-[4px_4px_24px_rgba(0,0,0,0.02)] dark:shadow-none flex items-center gap-3 transition-colors">
+                            <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
+                                <span class="iconify" data-icon="lucide:check-circle-2" data-width="20"></span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Selesai</p>
+                                <h4 class="text-xl font-bold text-emerald-600 dark:text-emerald-400 leading-none mt-0.5">{{ $doneWorkspace }}</h4>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-[4px_4px_24px_rgba(0,0,0,0.02)] dark:shadow-none rounded-2xl p-6 sm:p-8 transition-colors duration-300">
-                        <!-- Header Task List -->
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-slate-100 dark:border-slate-700/50 pb-5 mb-6 gap-4 transition-colors">
                             <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 transition-colors">
                                 <span class="iconify text-indigo-500 dark:text-indigo-400" data-icon="lucide:list-todo"></span>
@@ -47,7 +93,6 @@
                             </div>
                         </div>
 
-                        <!-- Form Filter -->
                         <form method="GET" action="{{ route('teams.show', $team->slug) }}" class="mb-6 bg-slate-50 dark:bg-slate-900/50 p-5 rounded-xl border border-slate-100 dark:border-slate-700/50 transition-colors">
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
                                 <div class="md:col-span-1">
@@ -81,7 +126,6 @@
                             </div>
                         </form>
 
-                        <!-- TABEL TUGAS -->
                         @if($tasks->isEmpty())
                             <div class="text-center py-12 bg-slate-50 dark:bg-slate-900/30 border border-dashed border-slate-200 dark:border-slate-700 rounded-xl transition-colors">
                                 <span class="iconify text-slate-300 dark:text-slate-600 mx-auto mb-3" data-icon="lucide:inbox" data-width="40"></span>
@@ -194,11 +238,9 @@
                     </div>
                 </div>
 
-                <!-- KOLOM KANAN: INFO & ANGGOTA -->
                 <div class="space-y-6 lg:col-span-1">
                     
                     <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-[4px_4px_24px_rgba(0,0,0,0.02)] dark:shadow-none rounded-2xl p-6 sm:p-8 transition-colors duration-300 relative overflow-hidden">
-                        <!-- Dekorasi Background -->
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-indigo-50 dark:bg-indigo-500/5 rounded-full blur-xl pointer-events-none"></div>
 
                         <div class="flex justify-between items-center mb-5 border-b border-slate-100 dark:border-slate-700/50 pb-4 transition-colors relative z-10">
@@ -357,7 +399,6 @@
             </div>
         </div>
 
-        <!-- POPUP MODAL RIWAYAT AKTIVITAS -->
         <div x-show="showActivityModal" class="fixed inset-0 z-[60] overflow-y-auto" style="display: none;">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
                 <div x-show="showActivityModal" x-transition.opacity class="fixed inset-0 transition-opacity bg-slate-900/80 backdrop-blur-sm" @click="showActivityModal = false"></div>
