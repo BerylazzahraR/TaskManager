@@ -41,7 +41,7 @@
             </button>
 
             <p class="text-center text-sm text-slate-500 dark:text-slate-400">
-                Sudah punya akun? 
+                Sudah punya akun? masuk dengan email Anda. 
                 <a href="{{ route('login') }}" class="font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">Login di sini</a>
             </p>
         </div>
