@@ -39,14 +39,11 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
-            <!-- HEADING RINGKAS -->
             <div class="mb-4">
                 <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">Halo, {{ explode(' ', Auth::user()->name)[0] }}!</h1>
             </div>
 
-            <!-- STATISTIK CARD (3 Kolom) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- In Progress -->
                 <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-6 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-500">
                         <span class="iconify" data-icon="lucide:loader" data-width="24"></span>
@@ -57,7 +54,6 @@
                     </div>
                 </div>
 
-                <!-- Selesai -->
                 <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-6 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                         <span class="iconify" data-icon="lucide:check-circle-2" data-width="24"></span>
@@ -68,7 +64,6 @@
                     </div>
                 </div>
 
-                <!-- Task Telat -->
                 <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-6 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-500">
                         <span class="iconify" data-icon="lucide:alert-triangle" data-width="24"></span>
@@ -80,10 +75,8 @@
                 </div>
             </div>
 
-            <!-- SECTION WORKSPACE & URGENT TASKS -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 
-                <!-- KOLOM KIRI: Daftar Workspace -->
                 <div class="lg:col-span-2 space-y-4">
                     <div class="flex items-center justify-between">
                         <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -96,17 +89,18 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         @forelse($userTeams as $team)
-                            <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-5 hover:shadow-md transition-all flex flex-col">
+                            <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-5 hover:shadow-md transition-all flex flex-col group">
                                 <div class="flex justify-between items-start mb-4">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-lg">
+                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-lg transition-colors">
                                         {{ strtoupper(substr($team->name, 0, 1)) }}
                                     </div>
-                                    <span class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                    
+                                    <span class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider transition-colors {{ $team->status === 'active' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400' }}">
                                         {{ $team->status }}
                                     </span>
                                 </div>
-                                <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-1 line-clamp-1">{{ $team->name }}</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 h-8">{{ $team->description ?? 'Tidak ada deskripsi.' }}</p>
+                                <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-1 line-clamp-1 transition-colors">{{ $team->name }}</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 h-8 transition-colors">{{ $team->description ?? 'Tidak ada deskripsi.' }}</p>
                                 
                                 <a href="{{ route('teams.show', $team->slug) }}" class="mt-auto w-full text-center text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 py-2.5 rounded-lg transition-colors">
                                     Buka Workspace
@@ -118,7 +112,6 @@
                     </div>
                 </div>
 
-                <!-- KOLOM KANAN: Task Terdekat -->
                 <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-5 shadow-sm">
                     <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base mb-5 flex items-center gap-2">
                         <span class="iconify text-orange-500" data-icon="lucide:clock-4"></span> Tenggat Terdekat

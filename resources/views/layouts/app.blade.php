@@ -93,5 +93,43 @@
 
             </div>
         </div>
+        @if (session('success') || session('error'))
+        <div x-data="{ show: true }"
+             x-show="show"
+             x-transition:enter="transform ease-out duration-300 transition"
+             x-transition:enter-start="translate-y-10 opacity-0"
+             x-transition:enter-end="translate-y-0 opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0 translate-x-10"
+             x-init="setTimeout(() => show = false, 4000)"
+             class="fixed bottom-6 right-6 z-[100] flex items-center p-4 min-w-[300px] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700/50"
+             style="display: none;">
+
+            @if(session('success'))
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <span class="iconify" data-icon="lucide:check-circle-2" data-width="24"></span>
+                </div>
+                <div class="ml-4 mr-6">
+                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100">Berhasil!</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ session('success') }}</p>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                    <span class="iconify" data-icon="lucide:alert-triangle" data-width="24"></span>
+                </div>
+                <div class="ml-4 mr-6">
+                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100">Oops, Gagal!</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ session('error') }}</p>
+                </div>
+            @endif
+
+            <button type="button" @click="show = false" class="ml-auto flex-shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-slate-50 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700 p-1.5 rounded-lg transition-colors">
+                <span class="iconify" data-icon="lucide:x" data-width="16"></span>
+            </button>
+        </div>
+    @endif
     </body>
 </html>
