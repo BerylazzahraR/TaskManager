@@ -46,6 +46,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('teams', TeamController::class)->parameters([
         'teams' => 'team' 
     ]);
+    Route::patch('/notifications/{notification}/read', function (\App\Models\Notification $notification) {
+    // Pastiin cuma yang punya notif yang bisa nge-read
+    if ($notification->user_id == auth()->id()) {
+        $notification->update([
+            'read_at' => now(), 
+            'status' => 'read'
+        ]);
+    }
+    return back();
+})->name('notifications.read');
 });
 
 require __DIR__.'/auth.php';

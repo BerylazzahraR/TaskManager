@@ -3,6 +3,11 @@
                         ->orWhereHas('users', function($q) {
                             $q->where('users.id', Auth::id());
                         })->get();
+
+    // Hitung Notifikasi Unread (Khusus punya user login)
+    $unreadCount = \App\Models\Notification::where('user_id', Auth::id())
+                        ->whereNull('read_at')
+                        ->count();
 @endphp
 
 <div x-show="sidebarOpen" class="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden" @click="sidebarOpen = false" x-transition.opacity style="display: none;"></div>
@@ -47,7 +52,13 @@
                     <span class="iconify" data-icon="lucide:folder-kanban" data-width="20"></span>
                     Workspaces
                 </div>
-                <span class="iconify transition-transform duration-300" :class="openWorkspace ? 'rotate-180' : ''" data-icon="lucide:chevron-down" data-width="16"></span>
+
+                <div class="flex items-center gap-2">
+                    @if($unreadCount > 0)
+                        <span class="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md leading-none shadow-sm">{{ $unreadCount }}</span>
+                    @endif
+                    <span class="iconify transition-transform duration-300" :class="openWorkspace ? 'rotate-180' : ''" data-icon="lucide:chevron-down" data-width="16"></span>
+                </div>
             </button>
 
             <div x-show="openWorkspace" x-transition class="mt-1 space-y-1 pl-11 pr-2">

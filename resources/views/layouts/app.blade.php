@@ -54,11 +54,80 @@
                                 <span x-show="!darkMode" class="iconify" data-icon="lucide:moon" data-width="18"></span>
                             </button>
 
-                            <button class="relative p-2.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-slate-800 rounded-full shadow-sm transition-all focus:outline-none border border-transparent dark:border-slate-700">
-                                <span class="iconify" data-icon="lucide:bell" data-width="18"></span>
-                                <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-slate-800"></span>
-                            </button>
+                            @php
+                                $unreadNotifications = \App\Models\Notification::where('user_id', Auth::id())
+                                    ->whereNull('read_at')
+                                    ->latest()
+                                    ->take(5)
+                                    ->get();
+                                    
+                                $unreadCount = \App\Models\Notification::where('user_id', Auth::id())
+                                    ->whereNull('read_at')
+                                    ->count();
+                            @endphp
 
+                            <div class="relative flex items-center" x-data="{ openNotif: false }" @click.outside="openNotif = false">
+                                
+                                <button @click="openNotif = !openNotif" class="relative p-2.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-slate-800 rounded-full shadow-sm transition-all focus:outline-none border border-transparent dark:border-slate-700">
+                                    <span class="iconify" data-icon="lucide:bell" data-width="18"></span>
+                                    
+                                    @if($unreadCount > 0)
+                                        <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white dark:ring-slate-800 border border-white dark:border-slate-800"></span>
+                                    @endif
+                                </button>
+
+                                <div x-show="openNotif" 
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                                     x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                     x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+                                     class="absolute right-0 top-12 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700/50 z-[100] overflow-hidden"
+                                     style="display: none;">
+                                     
+                                     <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700/50 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/20">
+                                         <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Notifikasi</h3>
+                                         @if($unreadCount > 0)
+                                             <span class="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold px-2.5 py-1 rounded-md">{{ $unreadCount }} Baru</span>
+                                         @endif
+                                     </div>
+
+                                     <div class="max-h-[350px] overflow-y-auto">
+                                         @forelse($unreadNotifications as $notif)
+                                             <div class="px-5 py-4 border-b border-slate-50 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors flex items-start gap-4 group relative">
+                                                 <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5">
+                                                     <span class="iconify" data-icon="lucide:clipboard-list" data-width="16"></span>
+                                                 </div>
+                                                 
+                                                 <div class="flex-1 min-w-0 pr-8">
+                                                     <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                                         {{ $notif->message }}
+                                                     </p>
+                                                     <p class="text-[10px] font-bold text-slate-400 mt-1.5 flex items-center gap-1">
+                                                         <span class="iconify" data-icon="lucide:clock" data-width="10"></span>
+                                                         {{ $notif->created_at->diffForHumans() }}
+                                                     </p>
+                                                 </div>
+                                                 
+                                                 <form action="{{ route('notifications.read', $notif->id) }}" method="POST" class="opacity-0 group-hover:opacity-100 transition-opacity absolute right-4 top-1/2 -translate-y-1/2">
+                                                     @csrf @method('PATCH')
+                                                     <button type="submit" class="bg-white dark:bg-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-500 p-2 rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm transition-colors" title="Tandai sudah dibaca">
+                                                         <span class="iconify" data-icon="lucide:check" data-width="14"></span>
+                                                     </button>
+                                                 </form>
+                                             </div>
+                                         @empty
+                                             <div class="px-4 py-10 text-center">
+                                                 <div class="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-900/50 flex items-center justify-center text-slate-400 mx-auto mb-3">
+                                                     <span class="iconify" data-icon="lucide:bell-off" data-width="24"></span>
+                                                 </div>
+                                                 <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Belum ada notifikasi baru.</p>
+                                             </div>
+                                         @endforelse
+                                     </div>
+                                </div>
+                            </div>
                             <x-dropdown align="right" width="48">
                                 <x-slot name="trigger">
                                     <button class="flex items-center gap-2 p-1.5 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-100 dark:border-slate-700 transition-all focus:outline-none hover:ring-2 hover:ring-indigo-100 dark:hover:ring-indigo-900/30">
@@ -93,6 +162,7 @@
 
             </div>
         </div>
+        
         @if (session('success') || session('error'))
         <div x-data="{ show: true }"
              x-show="show"
@@ -130,6 +200,7 @@
                 <span class="iconify" data-icon="lucide:x" data-width="16"></span>
             </button>
         </div>
-    @endif
+        @endif
+
     </body>
 </html>
