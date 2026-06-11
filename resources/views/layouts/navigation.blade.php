@@ -4,7 +4,7 @@
                             $q->where('users.id', Auth::id());
                         })->get();
 
-    // Hitung Notifikasi Unread (Khusus punya user login)
+    // Hitung Notifikasi Unread
     $unreadCount = \App\Models\Notification::where('user_id', Auth::id())
                         ->whereNull('read_at')
                         ->count();
@@ -79,15 +79,24 @@
     </div>
 
     <div class="p-4 mt-auto border-t border-slate-100 dark:border-slate-700/50">
-        <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200 transition-all">
+        <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-700 dark:hover:text-slate-200 transition-all mb-2">
             <span class="iconify" data-icon="lucide:settings" data-width="20"></span>
             Settings
         </a>
-        <div class="mt-4 bg-indigo-50/50 dark:bg-indigo-900/20 p-4 rounded-xl text-center border border-indigo-100/50 dark:border-indigo-800/30 relative overflow-hidden">
-            <span class="iconify text-indigo-500 dark:text-indigo-400 mx-auto mb-2" data-icon="lucide:life-buoy" data-width="24"></span>
-            <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300">Help & Support</p>
-            <p class="text-[9px] text-slate-500 dark:text-slate-400 mt-1">Kontak Admin Beryl</p>
-            <div class="absolute -right-4 -bottom-4 w-12 h-12 bg-indigo-500/10 rounded-full blur-md"></div>
-        </div>
+        
+        <!-- <button type="button" class="w-full flex items-center justify-between bg-indigo-50/50 dark:bg-indigo-900/20 hover:bg-indigo-100/50 dark:hover:bg-indigo-800/30 py-2.5 px-3.5 rounded-xl border border-indigo-100/50 dark:border-indigo-800/30 transition-colors group">
+            <div class="flex items-center gap-3 text-left">
+                <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                    <span class="iconify" data-icon="lucide:life-buoy" data-width="14"></span>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">Help & Support</p>
+                    <p class="text-[9px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">Admin Beryl</p>
+                </div>
+            </div>
+            <div class="text-indigo-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 shrink-0 p-1 bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                <span class="iconify" data-icon="lucide:chevron-right" data-width="14"></span>
+            </div>
+        </button> -->
     </div>
 </aside>
